@@ -1,0 +1,32 @@
+﻿@model K3F.Calendar.Models.EventPart
+@{
+    Script.Require("jQuery");
+    Style.Require("jQueryUI_DatePicker");
+    Script.Require("jQueryUI_DatePicker_BR");
+    
+}
+
+@Html.LabelFor(x=>x.Name, T("Name"))
+@Html.TextAreaFor(x=>x.Name)
+           
+@Html.LabelFor(x=>x.Description, T("Description"))
+@Html.TextAreaFor(x=>x.Description)
+
+@Html.LabelFor(x=>x.StartsAt, T("StartsAt"))
+@Html.TextBoxFor(x=>x.StartsAt)
+
+@Html.LabelFor(x=>x.EndsAt,T("EndsAt"))
+@Html.TextBoxFor(x=>x.EndsAt)
+
+@Html.HiddenFor(x=>x.CreatedAt)
+
+
+@using(Script.Foot()) {
+<script type="text/javascript">
+    $(function () {
+        $("#@Html.FieldIdFor(m => Model.EndsAt)").datepicker($.datepicker.regional["pt-BR"]);
+        $("#@Html.FieldIdFor(m => Model.StartsAt)").datepicker($.datepicker.regional["pt-BR"]);
+
+});
+</script>
+}

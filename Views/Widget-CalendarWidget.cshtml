@@ -1,0 +1,33 @@
+﻿@{
+    Script.Require("jQuery");
+}
+<div id="proximos-eventos">
+    <div class="row">
+        <div class="col-md-4"><i class="glyphicon glyphicon-chevron-left"></i></div>
+        <span class="col-md-4">@T("Next events")</span>
+        <div class="col-md-4">
+           <i class="glyphicon glyphicon-chevron-right"></i>
+         </div>
+    </div>
+</div>
+
+@using (Script.Foot())
+{
+    <script type="text/javascript"> 
+        $(document).ready(function () {
+            $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", function (data) {
+                $.each(data, function (index, item) {
+                    var quadro = $("<div></div>").addClass("col-md-4").append(item.WeekDay);
+                    var numero = $("<span></span>").append(item.Day);
+                    quadro.append(numero).append(item.Month);
+                    var nomeEvento = $("<div>Nome Evento</div>");
+                    var linha = $("<div></div>").addClass("col-md-12").append(quadro);
+                    
+                    $("#proximos-eventos").append(linha);
+                });
+            });
+            
+        });
+
+    </script>
+}
