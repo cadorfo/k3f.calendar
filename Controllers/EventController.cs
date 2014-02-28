@@ -29,13 +29,15 @@ namespace K3F.Calendar.Controllers
                 Name = x.Name,
                 Description = x.Description,
 
-                StartsDay = x.StartsAt.Day,
-                StartsWeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
-                StartsMonth = info.GetMonthName(x.StartsAt.Month),
+                StartsAt = x.StartsAt.ToString("yyyy-MM-dd"),
+                StartsAtDay = x.StartsAt.Day,
+                StartsAtWeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
+                StartsAtMonth = info.GetMonthName(x.StartsAt.Month),
 
-                EndsDay = x.EndsAt.Day,
-                EndsWeekDay = info.GetDayName(x.EndsAt.DayOfWeek),
-                EndsMonth = info.GetMonthName(x.EndsAt.Month)
+                EndsAtAt = x.EndsAt.ToString("yyyy-MM-dd"),
+                EndsAtDay = x.EndsAt.Day,
+                EndsAtWeekDay = info.GetDayName(x.EndsAt.DayOfWeek),
+                EndsAtMonth = info.GetMonthName(x.EndsAt.Month)
             }).ToList();
             var data = new {
                 PrevPage = nextPage > 0,
