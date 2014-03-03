@@ -1,0 +1,130 @@
+﻿.k3f-calendar {
+    background: #7dbd3b;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdkYmQzYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1ZWE1MjUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top, #7dbd3b 0%, #5ea525 100%);
+    background: -webkit-linear-gradient(top, #7dbd3b 0%, #5ea525 100%);
+    background: linear-gradient(to bottom, #7dbd3b 0%, #5ea525 100%);
+    padding: 20px;
+    color: #FFF;
+}
+
+    .k3f-calendar a,
+    .k3f-calendar a:hover {
+        color: #FFF !important;
+    }
+
+    .k3f-calendar .k3f-calendar-header {
+        font-size: 22px;
+        line-height: 24px;
+        position: relative;
+        margin-bottom: 14px;
+    }
+
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-prev,
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-next {
+            border: 1px solid #fff;
+            border-radius: 50%;
+            display: block;
+            font-size: 18px;
+            height: 25px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 25px;
+        }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev.disable,
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-next.disable {
+                cursor: default;
+                opacity: .5;
+            }
+
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:after,
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:before,
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-next:after,
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-next:before {
+                border-color: transparent;
+                border-style: solid;
+                border-width: 9px 0 9px 9px;
+                content: " ";
+                display: block;
+                height: 0;
+                position: absolute;
+                top: 3px;
+                width: 0;
+                -webkit-transition: all 0.1s ease-in;
+                -moz-transition: all 0.1s ease-in;
+                -o-transition: all 0.1s ease-in;
+                transition: all 0.1s ease-in;
+            }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:after,
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:before {
+                border-width: 9px 9px 9px 0;
+            }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:after {
+                right: 7px;
+                border-right-color: #7dbd3b;
+                z-index: 2 !important;
+            }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:before {
+                right: 4px;
+                border-right-color: #fff;
+            }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:after,
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-next:after {
+                border-left-color: #fff;
+                right: 5px;
+                z-index: 0;
+            }
+
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-prev:before,
+            .k3f-calendar .k3f-calendar-header .k3f-calendar-next:before {
+                border-left-color: #7dbd3b;
+                right: 8px;
+                z-index: 1;
+            }
+
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-next {
+            left: auto;
+            right: 0;
+        }
+
+        .k3f-calendar .k3f-calendar-header .k3f-calendar-title {
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+    .k3f-calendar .k3f-calendar-content {
+    }
+
+        .k3f-calendar .k3f-calendar-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .k3f-calendar .k3f-calendar-content ul li {
+                border-top: 1px solid #badade;
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+                .k3f-calendar .k3f-calendar-content ul li > span {
+                    font-size: 20px;
+                    padding: 0;
+                    line-height: 70px;
+                }
+
+                .k3f-calendar .k3f-calendar-content ul li time {
+                    padding: 0;
+                    line-height: 10px;
+                }
+
+                    .k3f-calendar .k3f-calendar-content ul li time span {
+                        font-size: 46px;
+                        display: block;
+                        line-height: 53px;
+                    }

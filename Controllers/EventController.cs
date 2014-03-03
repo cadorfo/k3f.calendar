@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using System.Linq;
 using System.Globalization;
 
-
 namespace K3F.Calendar.Controllers
 {
     //[Admin] or [Themed] for a default layout. Can be placed on the controller or methods
@@ -18,18 +17,37 @@ namespace K3F.Calendar.Controllers
             this._repositoryEvent = repositoryEvent;
         }
 
-        public ActionResult ListNextEvents()
+        public ActionResult ListNextEvents(int page)
         {
             var ptBR = new CultureInfo("pt-BR");
             var info = ptBR.DateTimeFormat;
-            var eventos = _repositoryEvent.Fetch(x => x.StartsAt > DateTime.Today).Take(4).Select(x => new
+            var pearPage = 3;
+            var nextPage = (page - 1) * pearPage;
+            var totalEvento = _repositoryEvent.Count(x => x.StartsAt > DateTime.Today);
+            var eventos = _repositoryEvent.Fetch(x => x.StartsAt > DateTime.Today).Skip(nextPage).Take(pearPage).Select(x => new
             {
-                Day = x.StartsAt.Day,
-                WeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
-                Month = info.GetMonthName(x.StartsAt.Month)
+                Name = x.Name,
+                Description = x.Description,
+
+                StartsAt = x.StartsAt.ToString("yyyy-MM-dd"),
+                StartsAtDay = x.StartsAt.Day,
+                StartsAtWeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
+                StartsAtMonth = info.GetMonthName(x.StartsAt.Month),
+
+                EndsAtAt = x.EndsAt.ToString("yyyy-MM-dd"),
+                EndsAtDay = x.EndsAt.Day,
+                EndsAtWeekDay = info.GetDayName(x.EndsAt.DayOfWeek),
+                EndsAtMonth = info.GetMonthName(x.EndsAt.Month)
             }).ToList();
-            return new JsonResult() { Data = eventos, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            var data = new {
+                PrevPage = nextPage > 0,
+                NextPage = (nextPage + pearPage) <= totalEvento,
+                Data = eventos
+            };
+
+            return new JsonResult() { Data = data, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
     }
+
 }
