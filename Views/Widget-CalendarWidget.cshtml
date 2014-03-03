@@ -1,35 +1,74 @@
 ﻿@{
     Script.Require("jQuery");
+    Style.Include("calendar.css");
 }
-<div id="proximos-eventos">
-    <div class="row">
-        <div class="col-md-4"><i class="glyphicon glyphicon-chevron-left"></i></div>
-        <span class="col-md-4">@T("Next events")</span>
-        <div class="col-md-4">
-           <i class="glyphicon glyphicon-chevron-right"></i>
-         </div>
+
+<div class="k3f-calendar">
+    <div class="k3f-calendar-header">
+        <a href="#" class="k3f-calendar-prev"></a>
+        <a href="#" class="k3f-calendar-next"></a>
+        <div class="k3f-calendar-title">@T("Próximos eventos")</div>
     </div>
+    <div class="k3f-calendar-content"></div>
 </div>
 
 @using (Script.Foot())
 {
-    <script type="text/javascript"> 
+    <script type="text/javascript">
         $(document).ready(function () {
-            $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", function (data) {
-                $.each(data, function (index, item) {
-                    var quadro = $("<div></div>").addClass("col-md-4").append(item.WeekDay);
-                    var numero = $("<span></span>").append(item.Day);
-                    quadro.append(numero).append(item.Month);
-                    var nomeEvento = $("<div></div>");
-                    $(nomeEvento).append(item.Name);
+            var prevLink = $('.k3f-calendar-prev'),
+                nextLink = $('.k3f-calendar-next');
+            var page = 0;
 
-                    var linha = $("<div></div>").addClass("col-md-12").append(quadro);
-                    
-                    $("#proximos-eventos").append(linha);
+            function getData() {
+                $.ajax({
+                    dataType: "json",
+                    url: "@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })",
+                    data: { page: page },
+                    beforeSend: function () {
+                        $(".k3f-calendar-content").addClass('loader').html('');
+                        prevLink.addClass('disable')
+                        nextLink.addClass('disable')
+                    },
+                    success: function (data) {
+                        if (data.PrevPage) {
+                            prevLink.removeClass('disable');
+                        } else {
+                            prevLink.addClass('disable');
+                        }
+
+                        if (data.NextPage) {
+                            nextLink.removeClass('disable');
+                        } else {
+                            nextLink.addClass('disable');
+                        }
+
+                        html = ['<ul>'];
+                        $.each(data.Data, function (index, item) {
+                            var li = '<li class="clearfix">';
+                            li += '<time datetime="' + item.StartsAt + '" class="col-xs-4 col-sm-4">' + item.StartsAtWeekDay + '<span>' + item.StartsAtDay + '</span>' + item.StartsAtMonth + '</time>';
+                            li += '<span class="col-xs-8 col-sm-8">' + item.Name + '</span>';
+                            li += '</li>';
+                            html.push(li);
+                        });
+                        html.push('</ul>');
+
+                        $(".k3f-calendar-content").removeClass('loader').html(html.join(''));
+                    }
                 });
-            });
-            
-        });
+            }
 
+            $('.k3f-calendar-header').on('click', 'a.k3f-calendar-prev:not(.disable), a.k3f-calendar-next:not(.disable)', function () {
+                if ($(this).hasClass('k3f-calendar-prev')) {
+                    page -= 1;
+                } else {
+                    page += 1;
+                }
+
+                getData();
+            });
+
+            nextLink.trigger('click');
+        });
     </script>
 }
