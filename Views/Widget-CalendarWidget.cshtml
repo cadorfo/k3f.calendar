@@ -20,7 +20,9 @@
                     var quadro = $("<div></div>").addClass("col-md-4").append(item.WeekDay);
                     var numero = $("<span></span>").append(item.Day);
                     quadro.append(numero).append(item.Month);
-                    var nomeEvento = $("<div>Nome Evento</div>");
+                    var nomeEvento = $("<div></div>");
+                    $(nomeEvento).append(item.Name);
+
                     var linha = $("<div></div>").addClass("col-md-12").append(quadro);
                     
                     $("#proximos-eventos").append(linha);

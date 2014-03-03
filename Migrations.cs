@@ -39,6 +39,7 @@ namespace K3F.Calendar
             ContentDefinitionManager.AlterPartDefinition("CalendarWidgetPart", part => part.WithDescription("Calendar part"));
             ContentDefinitionManager.AlterTypeDefinition("CalendarWidget",
                 cfg => cfg.WithPart("CalendarWidgetPart")
+                    .WithPart("CommonPart")
                 .WithSetting("Stereotype", "Widget"));
             return 2;
         }

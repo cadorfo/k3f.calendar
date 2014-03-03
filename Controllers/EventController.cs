@@ -26,7 +26,8 @@ namespace K3F.Calendar.Controllers
             {
                 Day = x.StartsAt.Day,
                 WeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
-                Month = info.GetMonthName(x.StartsAt.Month)
+                Month = info.GetMonthName(x.StartsAt.Month),
+                Name = x.Name
             }).ToList();
             return new JsonResult() { Data = eventos, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
