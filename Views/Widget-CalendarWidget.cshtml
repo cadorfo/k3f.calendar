@@ -46,8 +46,8 @@
                         html = ['<ul>'];
                         $.each(data.Data, function (index, item) {
                             var li = '<li class="clearfix">';
-                            li += '<time datetime="' + item.StartsAt + '" class="col-md-4">' + item.StartsAtWeekDay + '<span>' + item.StartsAtDay + '</span>' + item.StartsAtMonth + '</time>';
-                            li += '<span class="col-md-8">' + item.Name + '</span>';
+                            li += '<time datetime="' + item.StartsAt + '" class="col-xs-4 col-sm-4">' + item.StartsAtWeekDay + '<span>' + item.StartsAtDay + '</span>' + item.StartsAtMonth + '</time>';
+                            li += '<span class="col-xs-8 col-sm-8">' + item.Name + '</span>';
                             li += '</li>';
                             html.push(li);
                         });
