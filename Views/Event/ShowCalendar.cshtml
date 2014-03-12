@@ -1,0 +1,93 @@
+﻿@model List< K3F.Calendar.Models.EventRecord>
+@{
+    Script.Require("jQuery");
+    Script.Require("jQueryUI_DatePicker_BR");
+    Style.Require("jQueryUI_DatePicker");
+    Style.Include("agenda.css");
+}
+<div class="pagina-interna clearfix">
+    <article class="col-xs-12 col-sm-12">
+        @{
+            
+            <img src="@Url.Content(Html.ThemePath(WorkContext.CurrentTheme, "/Content/image/imagemPredios.png"))" class="img-responsive"/>
+            
+        }
+
+        <div class="content">
+
+            <h3 >@T("Serviços aos investidores")</h3>
+            <br />
+
+            <h1 >@T("Agenda de eventos")</h1>
+
+            <div class="texto col-xs-12 col-sm-12">
+                <div id="datepicker" class="col-md-6">
+                </div>
+                <div id="events-container" class="col-md-6">
+                    @foreach (var item in Model)
+                    {
+                        
+                        <div class="row">
+                            <div class="row">
+                            <h3 >@item.Name</h3>
+                                </div>
+                            <span>@(new System.Globalization.CultureInfo("pt-BR").DateTimeFormat.GetDayName(item.StartsAt.DayOfWeek)), @item.StartsAt.Day  de @item.StartsAt.ToString("MMMMM") de @item.StartsAt.Year </span>
+                            <p>@item.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+
+
+
+@using (Script.Foot())
+{
+    <script type="text/javascript"> $(function () {
+     var events = [];
+     $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", { page: 1, perPage: 30 }, function (data) {
+         events = data;
+         var selectedDates = {};
+         $.each(data.Data, function (index, item) {
+             var dateSelected = new Date(item.StartsAtInglishFormat);
+             selectedDates[dateSelected] = dateSelected;
+         });
+
+         $("#datepicker").datepicker({
+             beforeShowDay: function (date) {
+                 var Highlight = selectedDates[date];
+
+                 if (Highlight) {
+                     return [true, "k3f-highlighted", Highlight];
+                 }
+                 else {
+                     return [true, '', ''];
+                 }
+
+             },
+             onSelect: function (dateText, instance) {
+                 $.getJSON("@Url.Action("GetDayEvents", "Event", new { area = "K3F.Calendar" })", { dateRequested: dateText }, function (data) {
+
+                     $("#events-container").html("");
+
+                     $.each(data, function (index, item) {
+                         var event = $("<div class='row'></div>");
+                         $(event).append("<div class='row'><h3>" + item.Name + "</h3></div>");
+                         $(event).append("<span>" + item.StartsAtWeekDay + ", " + item.StartsAtDay + " de " + item.StartsAtMonth + " de " + item.StartsAtYear + "</span>");
+                         $(event).append("<p>" + item.Description + "</p>");
+                         $("#events-container").append(event);
+                     });
+
+                 });
+             }
+         });
+     });
+
+
+
+ });
+
+    </script>
+}

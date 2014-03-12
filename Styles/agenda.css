@@ -1,0 +1,11 @@
+﻿.k3f-highlighted a{
+   background-color : Green !important;
+   background-image :none !important;
+   color: White !important;
+   font-weight: !important;
+   font-size: 12px;
+}
+
+#events-container h3{
+    padding-left: 12px;
+}

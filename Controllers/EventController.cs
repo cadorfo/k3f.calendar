@@ -4,6 +4,7 @@ using System;
 using System.Web.Mvc;
 using System.Linq;
 using System.Globalization;
+using Orchard.Themes;
 
 namespace K3F.Calendar.Controllers
 {
@@ -17,14 +18,14 @@ namespace K3F.Calendar.Controllers
             this._repositoryEvent = repositoryEvent;
         }
 
-        public ActionResult ListNextEvents(int page)
+        public ActionResult ListNextEvents(int page, int perPage = 3)
         {
             var ptBR = new CultureInfo("pt-BR");
             var info = ptBR.DateTimeFormat;
-            var pearPage = 3;
-            var nextPage = (page - 1) * pearPage;
+
+            var nextPage = (page - 1) * perPage;
             var totalEvento = _repositoryEvent.Count(x => x.StartsAt > DateTime.Today);
-            var eventos = _repositoryEvent.Fetch(x => x.StartsAt > DateTime.Today).Skip(nextPage).Take(pearPage).Select(x => new
+            var eventos = _repositoryEvent.Fetch(x => x.StartsAt > DateTime.Today).OrderBy(x => x.StartsAt).Skip(nextPage).Take(perPage).Select(x => new
             {
                 Name = x.Name,
                 Description = x.Description,
@@ -34,18 +35,64 @@ namespace K3F.Calendar.Controllers
                 StartsAtWeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
                 StartsAtMonth = info.GetMonthName(x.StartsAt.Month),
 
+                StartsAtInglishFormat = x.StartsAt.ToString("MM/dd/yyyy"),
+
                 EndsAtAt = x.EndsAt.ToString("yyyy-MM-dd"),
                 EndsAtDay = x.EndsAt.Day,
                 EndsAtWeekDay = info.GetDayName(x.EndsAt.DayOfWeek),
                 EndsAtMonth = info.GetMonthName(x.EndsAt.Month)
             }).ToList();
-            var data = new {
+
+            var data = new
+            {
                 PrevPage = nextPage > 0,
-                NextPage = (nextPage + pearPage) <= totalEvento,
+                NextPage = (nextPage + perPage) <= totalEvento,
                 Data = eventos
             };
 
             return new JsonResult() { Data = data, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        [Themed]
+        public ActionResult ShowCalendar()
+        {
+            int page = 1;
+            int perPage = 10;
+            var ptBR = new CultureInfo("pt-BR");
+            var info = ptBR.DateTimeFormat;
+
+            var nextPage = (page - 1) * perPage;
+            var totalEvento = _repositoryEvent.Count(x => x.StartsAt > DateTime.Today);
+            var eventos = _repositoryEvent.Fetch(x => x.StartsAt > DateTime.Today).OrderBy(x => x.StartsAt).Skip(nextPage).Take(perPage).ToList();
+
+            return View(eventos);
+        }
+
+        public ActionResult GetDayEvents(String dateRequested)
+        {
+            var ptBR = new CultureInfo("pt-BR");
+            var info = ptBR.DateTimeFormat;
+
+            DateTime filterDate = DateTime.ParseExact(dateRequested, "dd/MM/yyyy", info);
+
+            var events = _repositoryEvent.Fetch(x => x.StartsAt >= filterDate && x.StartsAt <= filterDate.AddDays(1).AddMilliseconds(-1)).Select(x => new
+            {
+                Name = x.Name,
+                Description = x.Description,
+
+                StartsAt = x.StartsAt.ToString("yyyy-MM-dd"),
+                StartsAtDay = x.StartsAt.Day,
+                StartsAtWeekDay = info.GetDayName(x.StartsAt.DayOfWeek),
+                StartsAtMonth = info.GetMonthName(x.StartsAt.Month),
+                StartsAtYear = x.StartsAt.Year,
+
+                EndsAtAt = x.EndsAt.ToString("yyyy-MM-dd"),
+                EndsAtDay = x.EndsAt.Day,
+                EndsAtWeekDay = info.GetDayName(x.EndsAt.DayOfWeek),
+                EndsAtMonth = info.GetMonthName(x.EndsAt.Month)
+            }).ToList();
+
+            return new JsonResult() { JsonRequestBehavior = JsonRequestBehavior.AllowGet, Data = events };
         }
 
     }
