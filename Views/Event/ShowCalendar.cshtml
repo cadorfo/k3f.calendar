@@ -1,93 +1,93 @@
-﻿@model List< K3F.Calendar.Models.EventRecord>
+﻿@model List<K3F.Calendar.Models.EventRecord>
 @{
     Script.Require("jQuery");
     Script.Require("jQueryUI_DatePicker_BR");
     Style.Require("jQueryUI_DatePicker");
-    Style.Include("agenda.css");
+    Style.Include("calendar.css");
+    
+    var ptBR = new System.Globalization.CultureInfo("pt-BR").DateTimeFormat;
 }
 <div class="pagina-interna clearfix">
     <article class="col-xs-12 col-sm-12">
         @{
-            
             <img src="@Url.Content(Html.ThemePath(WorkContext.CurrentTheme, "/Content/image/imagemPredios.png"))" class="img-responsive"/>
-            
         }
 
         <div class="content">
+            <h3>@T("Serviços aos investidores")</h3><br />
+            <h1>@T("Agenda de eventos")</h1>
 
-            <h3 >@T("Serviços aos investidores")</h3>
-            <br />
-
-            <h1 >@T("Agenda de eventos")</h1>
-
-            <div class="texto col-xs-12 col-sm-12">
-                <div id="datepicker" class="col-md-6">
-                </div>
-                <div id="events-container" class="col-md-6">
-                    @foreach (var item in Model)
-                    {
-                        
-                        <div class="row">
-                            <div class="row">
-                            <h3 >@item.Name</h3>
-                                </div>
-                            <span>@(new System.Globalization.CultureInfo("pt-BR").DateTimeFormat.GetDayName(item.StartsAt.DayOfWeek)), @item.StartsAt.Day  de @item.StartsAt.ToString("MMMMM") de @item.StartsAt.Year </span>
-                            <p>@item.Description</p>
-                        </div>
-                    }
+            <div class="texto col-xs-12 col-sm-12 k3f-calendar k3f-calendar-show">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 k3f-calendar-datepicker"></div>
+                    <div class="col-xs-12 col-sm-8 k3f-calendar-content">
+                        <ul>
+                            @foreach (var item in Model)
+                            {
+                                <li class="clearfix">
+                                    <time datetime="@item.StartsAt" class="col-xs-2 col-sm-2">
+                                        @(ptBR.GetDayName(item.StartsAt.DayOfWeek))
+                                        <span>@item.StartsAt.Day</span>
+                                        @(ptBR.GetMonthName(item.StartsAt.Month))
+                                    </time>
+                                    <span class="col-xs-10 col-sm-10">
+                                        <h4>@item.Name</h4>
+                                        <p>@item.Description</p>
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </article>
 </div>
 
-
-
 @using (Script.Foot())
 {
-    <script type="text/javascript"> $(function () {
-     var events = [];
-     $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", { page: 1, perPage: 30 }, function (data) {
-         events = data;
-         var selectedDates = {};
-         $.each(data.Data, function (index, item) {
-             var dateSelected = new Date(item.StartsAtInglishFormat);
-             selectedDates[dateSelected] = dateSelected;
-         });
-
-         $("#datepicker").datepicker({
-             beforeShowDay: function (date) {
-                 var Highlight = selectedDates[date];
-
-                 if (Highlight) {
-                     return [true, "k3f-highlighted", Highlight];
-                 }
-                 else {
-                     return [true, '', ''];
-                 }
-
-             },
-             onSelect: function (dateText, instance) {
-                 $.getJSON("@Url.Action("GetDayEvents", "Event", new { area = "K3F.Calendar" })", { dateRequested: dateText }, function (data) {
-
-                     $("#events-container").html("");
-
-                     $.each(data, function (index, item) {
-                         var event = $("<div class='row'></div>");
-                         $(event).append("<div class='row'><h3>" + item.Name + "</h3></div>");
-                         $(event).append("<span>" + item.StartsAtWeekDay + ", " + item.StartsAtDay + " de " + item.StartsAtMonth + " de " + item.StartsAtYear + "</span>");
-                         $(event).append("<p>" + item.Description + "</p>");
-                         $("#events-container").append(event);
-                     });
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+             var events = [];
+             $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", { page: 1, perPage: 30 }, function (data) {
+                 events = data;
+                 var selectedDates = {};
+                 $.each(data.Data, function (index, item) {
+                     var dateSelected = new Date(item.StartsAtInglishFormat);
+                     selectedDates[dateSelected] = dateSelected;
                  });
-             }
+
+                 $(".k3f-calendar-datepicker").datepicker({
+                     beforeShowDay: function (date) {
+                         var highlight = selectedDates[date];
+                         if (highlight) {
+                             return [true, "k3f-highlighted", highlight];
+                         } else {
+                             return [true, '', ''];
+                         }
+
+                     },
+                     onSelect: function (dateText, instance) {
+                         $.getJSON("@Url.Action("GetDayEvents", "Event", new { area = "K3F.Calendar" })", { dateRequested: dateText }, function (data) {
+                             if (data.length) {
+                                 html = ['<ul>'];
+                                 $.each(data, function (index, item) {
+                                     var li = '<li class="clearfix">';
+                                     li += '<time datetime="' + item.StartsAt + '" class="col-xs-4 col-sm-4">' + item.StartsAtWeekDay + '<span>' + item.StartsAtDay + '</span>' + item.StartsAtMonth + '</time>';
+                                     li += '<span class="col-xs-8 col-sm-8">';
+                                     li += '<h4>' + item.Name + '</h4>';
+                                     li += '<p>' + item.Description + '</p>';
+                                     li += '</span>';
+                                     li += '</li>';
+                                     html.push(li);
+                                 });
+                                 html.push('</ul>');
+                                 $(".k3f-calendar-content").html(html.join(''));
+                             }
+                        });
+                     }
+                 });
+             });
          });
-     });
-
-
-
- });
-
     </script>
 }

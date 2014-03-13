@@ -64,7 +64,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Styles\agenda.css" />
     <Content Include="Styles\calendar.css" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
