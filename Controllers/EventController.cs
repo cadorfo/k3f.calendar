@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Linq;
 using System.Globalization;
 using Orchard.Themes;
+using System.Collections.Generic;
 
 namespace K3F.Calendar.Controllers
 {
@@ -56,6 +57,8 @@ namespace K3F.Calendar.Controllers
         [Themed]
         public ActionResult ShowCalendar()
         {
+
+
             int page = 1;
             int perPage = 10;
             var ptBR = new CultureInfo("pt-BR");
@@ -68,14 +71,27 @@ namespace K3F.Calendar.Controllers
             return View(eventos);
         }
 
-        public ActionResult GetDayEvents(String dateRequested)
+        public ActionResult GetDayEvents(String dateRequested = null)
         {
             var ptBR = new CultureInfo("pt-BR");
             var info = ptBR.DateTimeFormat;
 
-            DateTime filterDate = DateTime.ParseExact(dateRequested, "dd/MM/yyyy", info);
 
-            var events = _repositoryEvent.Fetch(x => x.StartsAt >= filterDate && x.StartsAt <= filterDate.AddDays(1).AddMilliseconds(-1)).Select(x => new
+
+            IEnumerable<EventRecord> eventos = null;
+
+            if (!String.IsNullOrEmpty(dateRequested))
+            {
+                DateTime filterDate = DateTime.ParseExact(dateRequested, "dd/MM/yyyy", info);
+                eventos = _repositoryEvent.Fetch(x => x.StartsAt >= filterDate && x.StartsAt <= filterDate.AddDays(1).AddMilliseconds(-1));
+            }
+            else
+            {
+                eventos = _repositoryEvent.Fetch(x => x.CreatedAt != null);
+            }
+
+
+            var events = eventos.Select(x => new
             {
                 Name = x.Name,
                 Description = x.Description,

@@ -4,23 +4,49 @@
     Script.Require("jQueryUI_DatePicker_BR");
     Style.Require("jQueryUI_DatePicker");
     Style.Include("calendar.css");
-    
+
     var ptBR = new System.Globalization.CultureInfo("pt-BR").DateTimeFormat;
 }
 <div class="pagina-interna clearfix">
     <article class="col-xs-12 col-sm-12">
         @{
-            <img src="@Url.Content(Html.ThemePath(WorkContext.CurrentTheme, "/Content/image/imagemPredios.png"))" class="img-responsive"/>
+            dynamic imagemCapa = ((dynamic)this.WorkContext.CurrentSite).ImagemCapaPart.Record;
+
+            if (imagemCapa.RecebaNovidades != null || imagemCapa.RecebaNovidades.Equals(""))
+            { 
+                <img src="@imagemCapa.RecebaNovidades" class="img-responsive"/>
+            
+            }
+            else
+            { 
+            <img src="http://orchardri.azurewebsites.net/Media/Default/PaginaInterna/ImagemCabecalho/fotofundo-1.jpg" class="img-responsive" />
+            }
         }
 
         <div class="content">
-            <h3>@T("Serviços aos investidores")</h3><br />
+            <h3>@T("Serviços aos investidores")</h3>
+            <br />
             <h1>@T("Agenda de eventos")</h1>
 
             <div class="texto col-xs-12 col-sm-12 k3f-calendar k3f-calendar-show">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4 k3f-calendar-datepicker"></div>
+                    <div class="col-xs-12 col-md-4 pull-right">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="col-md-12 col-xs-12 col-sm-4 k3f-calendar-datepicker"></div>
+                        <div class="col-md-12 showAllDiv">
+                            <p>
+                                <a href="#" id="showAll">@T("Exibir todos os eventos")</a>
+                            </p>
+                        </div>
+                    </div>
+
+
                     <div class="col-xs-12 col-sm-8 k3f-calendar-content">
+
+
                         <ul>
                             @foreach (var item in Model)
                             {
@@ -48,8 +74,8 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-             var events = [];
-             $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", { page: 1, perPage: 30 }, function (data) {
+            var events = [];
+            $.getJSON("@Url.Action("ListNextEvents", "Event", new { area = "K3F.Calendar" })", { page: 1, perPage: 30 }, function (data) {
                  events = data;
                  var selectedDates = {};
                  $.each(data.Data, function (index, item) {
@@ -84,10 +110,30 @@
                                  html.push('</ul>');
                                  $(".k3f-calendar-content").html(html.join(''));
                              }
-                        });
+                         });
                      }
                  });
              });
-         });
+
+            $("#showAll").click(function () {
+                $.getJSON("@Url.Action("GetDayEvents", "Event", new { area = "K3F.Calendar" })", { dateRequested: null }, function (data) {
+                    if (data.length) {
+                        html = ['<ul>'];
+                        $.each(data, function (index, item) {
+                            var li = '<li class="clearfix">';
+                            li += '<time datetime="' + item.StartsAt + '" class="col-xs-4 col-sm-4">' + item.StartsAtWeekDay + '<span>' + item.StartsAtDay + '</span>' + item.StartsAtMonth + '</time>';
+                            li += '<span class="col-xs-8 col-sm-8">';
+                            li += '<h4>' + item.Name + '</h4>';
+                            li += '<p>' + item.Description + '</p>';
+                            li += '</span>';
+                            li += '</li>';
+                            html.push(li);
+                        });
+                        html.push('</ul>');
+                        $(".k3f-calendar-content").html(html.join(''));
+                    }
+                });
+            });
+        });
     </script>
 }

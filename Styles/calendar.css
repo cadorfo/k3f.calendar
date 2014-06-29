@@ -232,3 +232,10 @@ div.k3f-calendar-show {
             background-repeat: repeat-x;
             border-color: #5D8803;
         }
+
+        div.k3f-calendar a{
+            color: #5D8803 !important;
+        }
+        div.k3f-calendar a:hover{
+            color: #5D8803 !important;
+        }
